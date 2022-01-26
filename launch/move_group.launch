@@ -1,9 +1,12 @@
 <launch>
 
+  <arg name="fake_exe" default="false" />
+
   <arg name="load_gripper" default="true" />
 
   <include file="$(find panda_moveit_config)/launch/planning_context.launch">
     <arg name="load_gripper" value="$(arg load_gripper)" />
+    <arg name="load_robot_description" value="false"/>
   </include>
 
   <arg name="pipeline" default="ompl" />
@@ -21,7 +24,7 @@
 
   <!-- move_group settings -->
   <arg name="allow_trajectory_execution" default="true"/>
-  <arg name="fake_execution" default="false"/>
+  <arg name="allow_octomap" default="false"/> 
   <arg name="max_safe_path_cost" default="1"/>
   <arg name="jiggle_fraction" default="0.05" />
   <arg name="publish_monitored_planning_scene" default="true"/>
@@ -34,15 +37,19 @@
   <!-- Trajectory Execution Functionality -->
   <include ns="move_group" file="$(find panda_moveit_config)/launch/trajectory_execution.launch.xml" if="$(arg allow_trajectory_execution)">
     <arg name="moveit_manage_controllers" value="true" />
-    <arg name="moveit_controller_manager" value="panda" if="$(eval not arg('fake_execution') and not arg('load_gripper'))"/>
-    <arg name="moveit_controller_manager" value="panda_gripper" if="$(eval not arg('fake_execution') and arg('load_gripper'))"/>
-    <arg name="moveit_controller_manager" value="fake" if="$(arg fake_execution)"/>
+    <arg name="moveit_controller_manager" value="panda" if="$(eval not arg('fake_exe') and not arg('load_gripper'))"/>
+    <arg name="moveit_controller_manager" value="panda_gripper" if="$(eval not arg('fake_exe') and arg('load_gripper'))"/>
+    <arg name="moveit_controller_manager" value="fake" if="$(arg fake_exe)"/>
   </include>
 
   <!-- Sensors Functionality -->
-  <include ns="move_group" file="$(find panda_moveit_config)/launch/sensor_manager.launch.xml" if="$(arg allow_trajectory_execution)">
+  <include ns="move_group" file="$(find panda_moveit_config)/launch/sensor_manager.launch.xml" if="$(arg allow_octomap)">
     <arg name="moveit_sensor_manager" value="panda" />
   </include>
+
+  <group unless="$(arg allow_octomap)">
+	  <rosparam command="delete" param="/move_group/sensors" />
+  </group>
 
   <!-- Start the actual move_group node/action server -->
   <node name="move_group" launch-prefix="$(arg launch_prefix)" pkg="moveit_ros_move_group" type="move_group" respawn="false" output="screen" args="$(arg command_args)">
@@ -53,12 +60,19 @@
     <param name="max_safe_path_cost" value="$(arg max_safe_path_cost)"/>
     <param name="jiggle_fraction" value="$(arg jiggle_fraction)" />
 
-    <!-- load these non-default MoveGroup capabilities -->
-    <!--
-    <param name="capabilities" value="
-                  a_package/AwsomeMotionPlanningCapability
-                  another_package/GraspPlanningPipeline
-                  " />
+   <!-- Load  ExecuteTaskSolutionCapability so we can execute found solutions in simulation -->
+    <param name="capabilities" value="move_group/MoveGroupCartesianPathService
+				      move_group/MoveGroupExecuteTrajectoryAction
+				      move_group/MoveGroupKinematicsService
+				      move_group/MoveGroupMoveAction
+				      move_group/MoveGroupPickPlaceAction
+				      move_group/MoveGroupPlanService
+				      move_group/MoveGroupQueryPlannersService
+				      move_group/MoveGroupStateValidationService
+				      move_group/MoveGroupGetPlanningSceneService
+				      move_group/ApplyPlanningSceneService
+				      move_group/ClearOctomapService
+              move_group/ExecuteTaskSolutionCapability" />
     -->
 
     <!-- inhibit these default MoveGroup capabilities -->
