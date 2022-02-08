@@ -1,11 +1,12 @@
 <launch>
 
   <arg name="fake_exe" default="false" />
-
+  <arg name="dual" default="false" />
   <arg name="load_gripper" default="true" />
 
   <include file="$(find panda_moveit_config)/launch/planning_context.launch">
     <arg name="load_gripper" value="$(arg load_gripper)" />
+    <arg name="dual" value="$(arg dual)"/>
     <arg name="load_robot_description" value="false"/>
   </include>
 
@@ -89,7 +90,7 @@
     <param name="planning_scene_monitor/publish_state_updates" value="$(arg publish_monitored_planning_scene)" />
     <param name="planning_scene_monitor/publish_transforms_updates" value="$(arg publish_monitored_planning_scene)" />
 
-    <remap from="/joint_states" to="/joint_states_desired" />
+    <!--remap from="/joint_states" to="/joint_states_desired" /-->
   </node>
 
 </launch>
