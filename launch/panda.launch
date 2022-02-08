@@ -2,9 +2,12 @@
   <arg name="fake" default="false" />
   <arg name="use_octomap" default="false" />
   <arg name="load_gripper" default="true" />
+  <arg name="dual" default="false" />
+
 
   <include file="$(find panda_moveit_config)/launch/move_group.launch">
     <arg name="fake_exe" value="$(arg fake)"/>
+    <arg name="dual" value="$(arg dual)" />
     <arg name="load_gripper" value="$(arg load_gripper)" />
     <arg name="allow_octomap" value="$(arg use_octomap)"/>
   </include>
