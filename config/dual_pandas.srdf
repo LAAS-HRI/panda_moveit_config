@@ -35,13 +35,13 @@
     </group>
 
     <group_state name="open" group="panda_1_hand">
-        <joint name="panda_1_finger_joint1" value="0.035" />
-        <joint name="panda_1_finger_joint2" value="0.035" />
+        <joint name="panda_1_finger_joint1" value="0.04" />
+        <joint name="panda_1_finger_joint2" value="0.04" />
     </group_state>
 
     <group_state name="open" group="panda_2_hand">
-        <joint name="panda_2_finger_joint1" value="0.035" />
-        <joint name="panda_2_finger_joint2" value="0.035" />
+        <joint name="panda_2_finger_joint1" value="0.04" />
+        <joint name="panda_2_finger_joint2" value="0.04" />
     </group_state>
 
     <group_state name="close" group="panda_1_hand">
